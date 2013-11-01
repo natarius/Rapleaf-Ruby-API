@@ -48,6 +48,21 @@ module RapleafApi
         get_json_response("#{@BASE_PATH}&email=#{url_encode(email)}", options[:show_available])
       end
     end
+    
+    # Takes an e-mail, first and last name and returns a hash which maps attribute fields onto attributes
+    # Options:
+    #  :hash_email     - the email will be hashed before it's sent to Rapleaf
+    #  :show_available - return the string "Data Available" for fields the API
+    #                    account is not subscribed to but for which Rapleaf has data
+    def query_by_email_and_name(email, first_name, last_name, options = {})
+      if options[:hash_email]
+        sha1_email = Digest::SHA1.hexdigest(email.downcase)
+        
+        get_json_response("#{@BASE_PATH}&sha1_email=#{url_encode(sha1_email)}&first=#{url_encode(first_name)}&last=#{url_encode(last_name)}", options[:show_available])
+      else
+        get_json_response("#{@BASE_PATH}&email=#{url_encode(email)}&first=#{url_encode(first_name)}&last=#{url_encode(last_name)}", options[:show_available])
+      end
+    end
   
     # Takes an e-mail that has already been hashed by md5
     # and returns a hash which maps attribute fields onto attributes,
